@@ -12,7 +12,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -22,12 +21,13 @@ class MyApp extends StatelessWidget {
           })
         ],
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Sports Training Camp',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 207, 117, 57)),
             useMaterial3: true,
           ),
-          home: const MyHomePage(title: 'Flutter Demo Home Page'),
+          home: const MyHomePage(title: 'Sports Training Camp'),
         ));
   }
 }
@@ -72,10 +72,10 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context, TransactionProvider provider, Widget? child) {
             int itemCount = provider.transactions.length;
             if (itemCount == 0) {
-              return Center(
+              return const Center(
                 child: Text(
-                  'ไม่มีรายการ',
-                  style: TextStyle(fontSize: 50),
+                  'ไม่พบตารางการฝึกซ้อม',
+                  style: TextStyle(fontSize: 30),
                 ),
               );
             } else {
@@ -90,10 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         provider.deleteTransaction(data);
                       },
                       background: Container(
-                        color: Colors.red,
+                        color: const Color.fromARGB(255, 206, 184, 63),
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: const Icon(Icons.edit, color: Colors.white),
+                        child: const Icon(Icons.edit,
+                            color: Color.fromARGB(255, 229, 228, 231)),
                       ),
                       child: Card(
                         elevation: 3,
@@ -102,12 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: ListTile(
                             title: Text(data.title),
                             subtitle: Text(
-                                'วันที่บันทึกข้อมูล: ${data.date?.toIso8601String()}',
-                                style: TextStyle(fontSize: 10)),
+                                'ช่วงเวลาลงตาราง: ${data.date?.hour}:${data.date?.minute} น.',
+                                style: const TextStyle(fontSize: 14)),
                             leading: CircleAvatar(
-                              child: FittedBox(
-                                child: Text(data.amount.toString()),
-                              ),
+                              child: const Icon(Icons.access_time),
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete),
@@ -116,18 +115,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('ยืนยันการลบ'),
-                                      content:
-                                          Text('คุณต้องการลบรายการใช่หรือไม่?'),
+                                      title: const Text('ยืนยันการลบ'),
+                                      content: const Text(
+                                          'คุณต้องการลบรายการใช่หรือไม่?'),
                                       actions: [
                                         TextButton(
-                                          child: Text('ยกเลิก'),
+                                          child: const Text('ยกเลิก'),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
-                                          child: Text('ลบรายการ'),
+                                          child: const Text('ลบรายการ'),
                                           onPressed: () {
                                             provider.deleteTransaction(data);
                                             Navigator.of(context).pop();

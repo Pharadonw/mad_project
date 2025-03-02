@@ -40,6 +40,7 @@ dependencies:
   path: ^1.9.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.10.0
   flutter_test:
     sdk: flutter
 
@@ -91,3 +92,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_icons:
+  android: true  # This will generate an icon for Android
+  ios: true      # This will generate an icon for iOS
+  image_path: "asset/icon/app_icon.png"  # Path to your custom icon

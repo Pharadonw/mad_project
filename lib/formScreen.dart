@@ -12,69 +12,108 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   final formKey = GlobalKey<FormState>();
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
+  final locationController = TextEditingController();
+  final sportTypeController = TextEditingController();
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
+
+  Future<void> _selectTime(BuildContext context, bool isStart) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: isStart
+          ? (startTime ?? TimeOfDay.now())
+          : (endTime ?? TimeOfDay.now()),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStart) {
+          startTime = picked;
+        } else {
+          endTime = picked;
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Input'),
+        title: const Text('เพิ่มตารางฝึกซ้อม'),
       ),
-      body: Form(
-        key: formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              decoration: InputDecoration(label: const Text('ชื่อรายการ')),
-              autofocus: true,
-              controller: titleController,
-              validator: (String? value) {
-                if(value!.isEmpty){
-                  print('value: $value');
-                  return "กรุณาป้อนชื่อรายการ";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: const Text('จำนวนเงิน')),
-              keyboardType: TextInputType.number,
-              controller: amountController,
-              validator: (String? value) {
-                try{
-                  double amount = double.parse(value!);
-                  if(amount <= 0){
-                    return "กรุณาป้อนจำนวนเงินที่มากกว่า 0";
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'สถานที่'),
+                controller: locationController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "กรุณาป้อนสถานที่";
                   }
-                  
-                } catch(e){
-                  return "กรุณาป้อนเป็นตัวเลขเท่านั้น";
-                }
-                return null;
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if(formKey.currentState!.validate()){
-                  // ทำการเพิ่มข้อมูล
-                  var provider = Provider.of<TransactionProvider>(context, listen: false);
-                  
-                  TransactionItem item = TransactionItem(
-                    title: titleController.text,
-                    amount: double.parse(amountController.text),
-                    date: DateTime.now()
-                  );
+                  return null;
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'ประเภทกีฬา'),
+                controller: sportTypeController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "กรุณาระบุประเภทกีฬา";
+                  }
+                  return null;
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => _selectTime(context, true),
+                      child: Text(startTime == null
+                          ? 'เลือกเวลาเริ่ม'
+                          : 'เริ่ม: ${startTime!.format(context)}'),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => _selectTime(context, false),
+                      child: Text(endTime == null
+                          ? 'เลือกเวลาสิ้นสุด'
+                          : 'สิ้นสุด: ${endTime!.format(context)}'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate() &&
+                      startTime != null &&
+                      endTime != null) {
+                    var provider = Provider.of<TransactionProvider>(context,
+                        listen: false);
 
-                  provider.addTransaction(item);
-                  // ปิดหน้าจอ
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('เพิ่มข้อมูล'),
-            ),
-        ],),
+                    TransactionItem item = TransactionItem(
+                      title:
+                          '${locationController.text} - ${sportTypeController.text}',
+                      amount: 0.0, // No numerical input for amount in this case
+                      date: DateTime.now(),
+                    );
+
+                    provider.addTransaction(item);
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('เพิ่มตารางฝึกซ้อม'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
