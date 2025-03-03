@@ -4,5 +4,6 @@ class TransactionItem {
   double amount;
   DateTime? date;
 
-  TransactionItem({this.keyID, required this.title, required this.amount, this.date});
+  TransactionItem(
+      {this.keyID, required this.title, required this.amount, this.date});
 }

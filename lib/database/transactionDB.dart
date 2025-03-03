@@ -74,8 +74,7 @@ class TransactionDB {
           'amount': item.amount,
           'date': item.date?.toIso8601String()
         },
-        finder: Finder(filter: Filter.equals(Field.key, item.keyID))
-    );
+        finder: Finder(filter: Filter.equals(Field.key, item.keyID)));
 
     db.close();
   }
